@@ -17,7 +17,8 @@ from keras import backend as K
 # from keras.layers.convolutional import _Conv
 from tensorflow.keras.layers import Conv2D
 #from keras.legacy import interfaces
-from keras.engine import InputSpec
+#from keras.engine import InputSpec
+from tensorflow.keras.layers import InputSpec
 import tensorflow as tf
 import numpy as np 
 
