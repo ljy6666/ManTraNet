@@ -7,27 +7,20 @@ Created on Thu Nov 29 18:07:45 2018
 """
 import os
 import tensorflow as tf
-from keras.layers import Layer, Input, GlobalAveragePooling2D, Lambda, Dense
-from keras.layers import ConvLSTM2D, Conv2D, AveragePooling2D, BatchNormalization
-from keras.constraints import unit_norm, non_neg
-from keras.activations import softmax
-from keras.models import Model
-from keras.initializers import Constant
-from keras.constraints import Constraint
-from keras import backend as K
-## from keras.layers.convolutional import _Conv
-from tensorflow .keras.layers.convolutional import _Conv
-#from keras.legacy import interfaces
-from tensorflow .keras.legacy import interfaces
-#from keras.engine import InputSpec
-from tensorflow .keras.engine import InputSpec
-import numpy as np 
+from tensorflow.keras.layers import Layer, Input, GlobalAveragePooling2D, Lambda, Dense
+from tensorflow.keras.layers import ConvLSTM2D, Conv2D, AveragePooling2D, BatchNormalization
+from tensorflow.keras.constraints import unit_norm, non_neg
+from tensorflow.keras.activations import softmax
+from tensorflow.keras.models import Model
+from tensorflow.keras.initializers import Constant
+from tensorflow.keras.constraints import Constraint
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import InputSpec  # 使用 tensorflow.keras.layers 中的 InputSpec
 
 #################################################################################
 # Model Utils for Image Manipulation Classification
 #################################################################################
-class Conv2DSymPadding( _Conv ) :
-    @interfaces.legacy_conv2d_support
+class Conv2DSymPadding(Conv2D):  # 继承自公开的 Conv2D
     def __init__(self, filters,
                  kernel_size,
                  strides=(1, 1),
@@ -45,11 +38,10 @@ class Conv2DSymPadding( _Conv ) :
                  bias_constraint=None,
                  **kwargs):
         super(Conv2DSymPadding, self).__init__(
-            rank=2,
             filters=filters,
             kernel_size=kernel_size,
             strides=strides,
-            padding='same',
+            padding=padding,  # 保持使用 'same'
             data_format=data_format,
             dilation_rate=dilation_rate,
             activation=activation,
@@ -63,33 +55,45 @@ class Conv2DSymPadding( _Conv ) :
             bias_constraint=bias_constraint,
             **kwargs)
         self.input_spec = InputSpec(ndim=4)
+
     def get_config(self):
         config = super(Conv2DSymPadding, self).get_config()
-        config.pop('rank')
         return config
-    def call( self, inputs ) :
-        if ( isinstance( self.kernel_size, tuple ) ) :
+
+    def call(self, inputs):
+        # 计算卷积核的大小
+        if isinstance(self.kernel_size, tuple):
             kh, kw = self.kernel_size
-        else :
+        else:
             kh = kw = self.kernel_size
-        ph, pw = kh//2, kw//2
-        inputs_pad = tf.pad( inputs, [[0,0],[ph,ph],[pw,pw],[0,0]], mode='symmetric' )
+        ph, pw = kh // 2, kw // 2
+
+        # 使用对称填充
+        inputs_pad = tf.pad(inputs, [[0, 0], [ph, ph], [pw, pw], [0, 0]], mode='SYMMETRIC')
+
+        # 进行卷积运算，保持 valid padding
         outputs = K.conv2d(
-                inputs_pad,
-                self.kernel,
-                strides=self.strides,
-                padding='valid',
-                data_format=self.data_format,
-                dilation_rate=self.dilation_rate)
+            inputs_pad,
+            self.kernel,
+            strides=self.strides,
+            padding='valid',  # 手动填充后使用 valid padding
+            data_format=self.data_format,
+            dilation_rate=self.dilation_rate
+        )
+
+        # 添加 bias
         if self.use_bias:
             outputs = K.bias_add(
                 outputs,
                 self.bias,
-                data_format=self.data_format)
+                data_format=self.data_format
+            )
 
+        # 应用激活函数
         if self.activation is not None:
             return self.activation(outputs)
         return outputs
+
         
 class BayarConstraint( Constraint ) :
     def __init__( self ) :
