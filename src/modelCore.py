@@ -25,8 +25,14 @@ import numpy as np
 #################################################################################
 # Model Utils for Image Manipulation Classification
 #################################################################################
-class Conv2DSymPadding(Conv2D) :
-    #@interfaces.legacy_conv2d_support
+from tensorflow.keras.layers import Conv2D, InputSpec
+import tensorflow as tf
+from tensorflow.keras import backend as K
+
+#################################################################################
+# Model Utils for Image Manipulation Classification
+#################################################################################
+class Conv2DSymPadding(Conv2D):
     def __init__(self, filters,
                  kernel_size,
                  strides=(1, 1),
@@ -43,12 +49,12 @@ class Conv2DSymPadding(Conv2D) :
                  kernel_constraint=None,
                  bias_constraint=None,
                  **kwargs):
+        # 调用父类 Conv2D 的初始化方法
         super(Conv2DSymPadding, self).__init__(
-            rank=2,
             filters=filters,
             kernel_size=kernel_size,
             strides=strides,
-            padding='same',
+            padding=padding,  # 保持为 'same'
             data_format=data_format,
             dilation_rate=dilation_rate,
             activation=activation,
@@ -62,24 +68,31 @@ class Conv2DSymPadding(Conv2D) :
             bias_constraint=bias_constraint,
             **kwargs)
         self.input_spec = InputSpec(ndim=4)
+
     def get_config(self):
+        # 获取配置信息
         config = super(Conv2DSymPadding, self).get_config()
-        config.pop('rank')
         return config
-    def call( self, inputs ) :
-        if ( isinstance( self.kernel_size, tuple ) ) :
+
+    def call(self, inputs):
+        # 自定义对称填充操作
+        if isinstance(self.kernel_size, tuple):
             kh, kw = self.kernel_size
-        else :
+        else:
             kh = kw = self.kernel_size
-        ph, pw = kh//2, kw//2
-        inputs_pad = tf.pad( inputs, [[0,0],[ph,ph],[pw,pw],[0,0]], mode='symmetric' )
+        ph, pw = kh // 2, kw // 2
+        # 使用 tf.pad 进行对称填充
+        inputs_pad = tf.pad(inputs, [[0, 0], [ph, ph], [pw, pw], [0, 0]], mode='SYMMETRIC')
+        
+        # 进行卷积操作
         outputs = K.conv2d(
-                inputs_pad,
-                self.kernel,
-                strides=self.strides,
-                padding='valid',
-                data_format=self.data_format,
-                dilation_rate=self.dilation_rate)
+            inputs_pad,
+            self.kernel,
+            strides=self.strides,
+            padding='valid',  # 自定义填充后使用 'valid'
+            data_format=self.data_format,
+            dilation_rate=self.dilation_rate)
+
         if self.use_bias:
             outputs = K.bias_add(
                 outputs,
@@ -89,6 +102,7 @@ class Conv2DSymPadding(Conv2D) :
         if self.activation is not None:
             return self.activation(outputs)
         return outputs
+
         
 class BayarConstraint( Constraint ) :
     def __init__( self ) :
