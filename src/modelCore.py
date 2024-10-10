@@ -150,7 +150,8 @@ class CombinedConv2D( Conv2DSymPadding ) :
             **kwargs)
         self.input_spec = InputSpec(ndim=4)
     def _get_srm_list( self ) :
-        # srm kernel 1                                                                                                                                
+        # srm kernel 1     
+        print("Debug: np is", np)  # 打印 np，确保它已被导入
         srm1 = np.zeros([5,5]).astype('float32')
         srm1[1:-1,1:-1] = np.array([[-1, 2, -1],
                                     [2, -4, 2],
