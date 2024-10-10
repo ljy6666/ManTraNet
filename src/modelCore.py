@@ -151,8 +151,8 @@ class CombinedConv2D( Conv2DSymPadding ) :
         self.input_spec = InputSpec(ndim=4)
     def _get_srm_list( self ) :
         # srm kernel 1                                                                                                                                
-        srm1 = numpy.zeros([5,5]).astype('float32')
-        srm1[1:-1,1:-1] = numpy.array([[-1, 2, -1],
+        srm1 = np.zeros([5,5]).astype('float32')
+        srm1[1:-1,1:-1] = np.array([[-1, 2, -1],
                                     [2, -4, 2],
                                     [-1, 2, -1]] )
         srm1 /= 4.
