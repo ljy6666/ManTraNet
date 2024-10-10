@@ -6,6 +6,7 @@ Created on Thu Nov 29 18:07:45 2018
 @author: yue_wu
 """
 import os
+import tensorflow as tf
 from keras.layers import Layer, Input, GlobalAveragePooling2D, Lambda, Dense
 from keras.layers import ConvLSTM2D, Conv2D, AveragePooling2D, BatchNormalization
 from keras.constraints import unit_norm, non_neg
@@ -15,11 +16,13 @@ from keras.initializers import Constant
 from keras.constraints import Constraint
 from keras import backend as K
 ## from keras.layers.convolutional import _Conv
-from keras.legacy import interfaces
-from keras.engine import InputSpec
-import tensorflow as tf
-import numpy as np 
 from tf.keras.layers.convolutional import _Conv
+#from keras.legacy import interfaces
+from tf.keras.legacy import interfaces
+#from keras.engine import InputSpec
+from tf.keras.engine import InputSpec
+import numpy as np 
+
 #################################################################################
 # Model Utils for Image Manipulation Classification
 #################################################################################
