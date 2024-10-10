@@ -7,6 +7,7 @@ Created on Thu Nov 29 18:07:45 2018
 """
 import os
 import tensorflow as tf
+import numpy as np
 from tensorflow.keras.layers import Layer, Input, GlobalAveragePooling2D, Lambda, Dense
 from tensorflow.keras.layers import ConvLSTM2D, Conv2D, AveragePooling2D, BatchNormalization
 from tensorflow.keras.constraints import unit_norm, non_neg
