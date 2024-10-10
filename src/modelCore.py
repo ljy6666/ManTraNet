@@ -14,7 +14,8 @@ from keras.models import Model
 from keras.initializers import Constant
 from keras.constraints import Constraint
 from keras import backend as K
-from keras.layers.convolutional import _Conv
+# from keras.layers.convolutional import _Conv
+from tensorflow.keras.layers import Conv2D
 from keras.legacy import interfaces
 from keras.engine import InputSpec
 import tensorflow as tf
@@ -23,7 +24,7 @@ import numpy as np
 #################################################################################
 # Model Utils for Image Manipulation Classification
 #################################################################################
-class Conv2DSymPadding( _Conv ) :
+class Conv2DSymPadding(Conv2D) :
     @interfaces.legacy_conv2d_support
     def __init__(self, filters,
                  kernel_size,
