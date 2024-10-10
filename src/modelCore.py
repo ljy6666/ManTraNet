@@ -12,7 +12,7 @@ from tensorflow.keras.layers import Layer, Input, GlobalAveragePooling2D, Lambda
 from tensorflow.keras.layers import ConvLSTM2D, Conv2D, AveragePooling2D, BatchNormalization
 from tensorflow.keras.constraints import unit_norm, non_neg
 from tensorflow.keras.activations import softmax
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model1
 from tensorflow.keras.initializers import Constant
 from tensorflow.keras.constraints import Constraint
 from tensorflow.keras import backend as K
