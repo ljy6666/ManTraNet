@@ -449,6 +449,7 @@ def create_model( IMC_model_idx, freeze_featex, window_size_list ) :
     return model
 
 def load_pretrain_model_by_index( pretrain_index, model_dir ) :
+    print(1)
     if ( pretrain_index == 4 ) :
         IMC_model_idx, freeze_featex, window_size_list  = 2, False, [7, 15, 31]
     else :
